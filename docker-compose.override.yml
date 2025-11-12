@@ -1,0 +1,7 @@
+services:
+  api:
+    volumes:
+      - uv_uploads:/app/uploads
+
+volumes:
+  uv_uploads:

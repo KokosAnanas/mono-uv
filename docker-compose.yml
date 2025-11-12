@@ -1,0 +1,37 @@
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+    volumes:
+      - mongo_data:/data/db
+
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    env_file: .env
+    environment:
+      PORT: ${NEST_PORT}
+      MONGODB_URI: "mongodb://admin:StrongPass_ChangeMe@mongo:27017/uvedb?authSource=admin"
+      DATABASE_URL: "mongodb://admin:StrongPass_ChangeMe@mongo:27017/uvedb?authSource=admin"
+      CORS_ORIGIN: ${CORS_ORIGIN}
+    depends_on:
+      - mongo
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ./frontend
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - api
+    restart: unless-stopped
+
+volumes:
+  mongo_data:

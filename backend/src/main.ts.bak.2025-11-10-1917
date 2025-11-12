@@ -1,0 +1,26 @@
+import { json, urlencoded } from "express";
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+import * as express from 'express';
+import { join } from 'path';
+import { json, urlencoded } from 'express';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  app.setGlobalPrefix("api");
+
+  // CORS + body limits
+  app.enableCors({ origin: true, credentials: true });
+  app.use(json({ limit: '20mb' }));
+  app.use(urlencoded({ extended: true, limit: '20mb' }));
+
+  // ВАЖНО: отдаём uploads из корня проекта относительно dist
+  const rootDir = join(__dirname, '..');        // => /app
+  app.use('/api/uploads', express.static(join(rootDir, 'uploads')));
+
+  app.use("/api/uploads", express.static(join(process.cwd(), "uploads"), { maxAge: "7d", immutable: true }));
+  app.use("/api/uploads", express.static(join(process.cwd(), "dist/uploads"), { maxAge: "7d", immutable: true }));
+  await app.listen(process.env.PORT || 3000, "0.0.0.0");
+}
+bootstrap();
+app.enableCors({ origin: true, credentials: true });

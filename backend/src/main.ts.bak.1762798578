@@ -1,0 +1,38 @@
+import { join } from "path";
+import * as express from "express";
+import { json, urlencoded } from "express";
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+import {LogLevel, ValidationPipe} from "@nestjs/common";
+import {NestExpressApplication} from "@nestjs/platform-express";
+import {join} from 'path';
+
+async function bootstrap() {
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+    const levelsCsv = process.env.NEST_LOG_LEVELS ?? 'log,error,warn';
+    const levels = levelsCsv.split(',').map(s => s.trim()).filter(Boolean) as LogLevel[];
+    app.useLogger(levels);
+
+    const csv = process.env.CORS_ORIGIN ?? '';
+    const origins = csv.split(',').map(s => s.trim()).filter(Boolean);
+
+  app.enableCors({
+    origin: origins.length ? origins : true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE, OPTIONS',
+    allowedHeaders: ['Content-Type', 'Accept', 'Authorization'],
+    credentials: true,
+  })
+
+  app.useStaticAssets(join(__dirname, '..', 'public'), {prefix: '/public'});
+  app.useStaticAssets(join(__dirname, '..', 'uploads'), { prefix: '/uploads' });
+
+  app.useGlobalPipes(new ValidationPipe({whitelist: true}));
+  app.use(json({ limit: "20mb" }));
+  app.use(urlencoded({ extended: true, limit: "20mb" }));
+  [ "uploads", "dist/uploads" ].forEach((p) => {
+    app.use("/api/uploads", express.static(join(process.cwd(), p)));
+  });
+  await app.listen(process.env.PORT ?? 3000);
+}
+bootstrap();

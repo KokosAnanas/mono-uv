@@ -1,0 +1,57 @@
+# http-level: лимитер для API (5 запросов/с на IP, очередь 5)
+limit_req_zone $binary_remote_addr zone=api_rl:10m rate=5r/s;
+
+server {
+  listen 80;
+  server_name _;
+
+  # ---- GZIP ----
+  gzip on;
+  gzip_comp_level 5;
+  gzip_min_length 1024;
+  gzip_vary on;
+  gzip_proxied any;
+  gzip_types text/plain text/css application/json application/javascript application/xml text/xml image/svg+xml font/woff2;
+
+  # ---- Безопасные заголовки ----
+  add_header X-Content-Type-Options "nosniff" always;
+  add_header X-Frame-Options "SAMEORIGIN" always;
+  add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+  add_header Permissions-Policy "geolocation=(), microphone=()" always;
+
+  # Скрыть версию в Server (полностью убрать заголовок нельзя штатно)
+  server_tokens off;
+
+  # ---- Статика SPA ----
+  root /usr/share/nginx/html;
+  index index.html;
+
+  # Главный роут SPA: index.html не кэшируем агрессивно
+  location / {
+    try_files $uri $uri/ /index.html;
+    add_header Cache-Control "no-store" always;
+  }
+
+  # Долгая статика (js/css/шрифты/картинки)
+  location ~* \.(?:js|css|png|jpg|jpeg|gif|svg|ico|woff2?)$ {
+    expires 30d;
+    add_header Cache-Control "public, max-age=2592000, immutable" always;
+    # продублируем security-headers (иначе add_header в location перекроет унаследованные)
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header Permissions-Policy "geolocation=(), microphone=()" always;
+  }
+
+  # ---- API с лимитом запросов и переписыванием префикса /api -> / ----
+  location /api/ {
+    limit_req_status 429;
+    rewrite ^/api/(.*)$ /$1 break;
+    limit_req zone=api_rl burst=5 nodelay;
+    proxy_pass http://api:3000;     # без URI-части, чтобы сохранить переписанный путь
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_http_version 1.1;
+  }
+}

@@ -1,0 +1,281 @@
+
+<div style="max-width:60rem;" class="shadow-4 p-5 max-w-60rem" [formGroup]="form">
+
+  <div class="card flex justify-content-center">
+    <div class="flex flex-column gap-1 align-items-center">
+      <input pSize="small" class="mx-auto border-round-md w-full"
+             type="text" pInputText formControlName="orgName" />
+      <small id="username-help">наименование организации, осуществляющей СК заказчика</small>
+    </div>
+  </div>
+
+  <div class="text-center mt-5 mb-1 font-bold text-xl">УВЕДОМЛЕНИЕ</div>
+  <div class="text-center mt-1 mb-4 font-bold text-xl">
+    О ВЫЯВЛЕННЫХ НАРУШЕНИЯХ №
+      <input type="text" pInputText formControlName="noticeNum" />
+  </div>
+
+
+
+
+  <div class="flex justify-content-between align-items-start gap-3 mb-2">
+
+    <!---------------------- левая колонка - дата ------------------------------->
+    <header class="flex-grow-0 flex-shrink-0" style="flex-basis:30%">
+      <!--  PrimeNG DatePicker -->
+      <p-datepicker
+        formControlName="noticeDate"
+        [showIcon]="true"
+        [firstDayOfWeek]="1"
+        dateFormat="dd.mm.yy"
+        inputClass="no-underline w-full"
+        class="w-full"
+        [showButtonBar]="true">
+      </p-datepicker>
+    </header>
+
+    <!----------- правая колонка — «Кому» ------------>
+    <div style="flex:1 1 70%">
+      <p-floatlabel variant="on">
+        <textarea pTextarea id="over_label" rows="3"
+                  cols="30" style="resize: none" class="w-full"
+                  formControlName="toWhom"></textarea>
+        <label for="on_label">Кому:</label>
+      </p-floatlabel>
+
+      <p-floatlabel variant="on">
+        <textarea pTextarea id="over_label" rows="3"
+                  cols="30" style="resize: none" class="w-full"
+                  formControlName="copyTo"></textarea>
+        <label for="on_label">Копия:</label>
+      </p-floatlabel>
+
+    </div>
+  </div>
+
+  <!----------------Текст уведомления------------------------------------>
+<div style="max-width:60rem;">
+  <div class="flex align-items-start w-full gap-2 mb-2">
+    <span class="align-self-start">Мною,&nbsp;</span>
+    <textarea pTextarea
+              autoResize="true"
+              rows="1"
+              formControlName="specialist"
+              class="flex-1 w-full"></textarea>
+  </div>
+
+  <div class="flex align-items-start w-full gap-2">
+    <span class="align-self-start">в присутствии,&nbsp;</span>
+    <textarea pTextarea
+              autoResize="true"
+              rows="1"
+              formControlName="present"
+              class="flex-1 w-full"></textarea>
+  </div>
+
+  <div class="flex align-items-start w-full gap-2 mt-2">
+    <span class="align-self-start">на объекте&nbsp;</span>
+    <textarea pTextarea
+              autoResize="true"
+              rows="1"
+              formControlName="objectName"
+              class="flex-1 w-full"></textarea>
+  </div>
+
+  <div class="flex align-items-start w-full gap-2 mt-2 mb-1">
+    <span class="align-self-start">в ходе выполнения&nbsp;</span>
+    <textarea pTextarea
+              autoResize="true"
+              rows="1"
+              formControlName="workType"
+              class="flex-1 w-full"></textarea>
+  </div>
+</div>
+  <div class="align-self-start mb-4">
+    выявлены следующие нарушения требований действующих нормативных документов, отступления от проектной документации:
+  </div>
+
+
+
+  <!--------------------------- Таблица нарушений ----------------------------------------------->
+
+  <table class="violations w-full">
+    <thead>
+    <tr>
+      <th>№ п/п</th>
+      <th>Перечень выявленных нарушений</th>
+      <th>Наименование нормативного документа,<br>пункт, шифр проекта, лист</th>
+      <th>Предлагаемый<br>срок устранения</th>
+      <th>Примечание</th>
+    </tr>
+    </thead>
+
+    <tbody formArrayName="violations">
+    <tr *ngFor="let v of violations.controls; let i = index" [formGroupName]="i">
+      <!-- Номер -->
+      <td class="text-center align-top">{{ i + 1 }}</td>
+
+      <!------------- Перечень нарушений --------------->
+      <td class="p-0">
+        <div class="violation-field">
+          <label class="violation-label">Место нарушения:</label>
+          <textarea pTextarea autoResize rows="1"
+                    formControlName="place" class="violation-input"></textarea>
+
+          <label class="violation-label">Элемент нарушения:</label>
+          <textarea pTextarea autoResize rows="1"
+                    formControlName="element" class="violation-input"></textarea>
+
+          <label class="violation-label">Предмет нарушения:</label>
+          <textarea pTextarea autoResize rows="2"
+                    formControlName="subject" class="violation-input"></textarea>
+        </div>
+      </td>
+
+      <!------------ Нормативный документ ------------->
+      <td class="p-0">
+        <textarea pTextarea autoResize rows="3"
+                  formControlName="norm" class="violation-input"></textarea>
+      </td>
+
+      <!----------- Срок ------------->
+      <td class="text-center">
+        <p-datepicker
+          formControlName="deadline"
+          [showIcon]="false"
+          [firstDayOfWeek]="1"
+          dateFormat="dd.mm.yy"
+          [inputStyleClass]="
+      v.errors?.['earlyDeadline']
+        ? 'p-inputtext p-invalid border-2 border-red-500 outline-none text-center w-full'
+        : 'p-inputtext border border-gray-300 outline-none text-center w-full'
+    "
+          [class.p-invalid]="v.errors?.['earlyDeadline']"
+          class="w-full">
+        </p-datepicker>
+      </td>
+
+      <!-- Примечание -->
+      <td class="p-0">
+        <textarea pTextarea autoResize rows="2"
+                  formControlName="note" class="violation-input"></textarea>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+  <div class="card flex justify-center m-2">
+    <p-buttongroup>
+      <p-button (click)="addViolation()" label="Добавить нарушение"
+                icon="pi pi-plus" severity="secondary"
+                />
+      <p-button (click)="removeLastViolation()" [disabled]="violations.length === 0"
+                label="Удалить" icon="pi pi-trash" severity="secondary"
+               />
+    </p-buttongroup>
+  </div>
+
+  <!------------------------------------------------------------------------------------->
+
+  <div class="flex flex-column align-items-start gap-2 w-full mb-2 mt-4">
+    <span class="align-self-start">В связи с тем, что выявленные нарушения ведут к снижению качества работ и
+    уровня безопасности объектов ПАО «Газпром», необходимо:&nbsp;</span>
+
+    <div style="width: 40rem">
+      <p-dropdown formControlName="actions"
+                  [options]="actionsOpc"
+                  optionLabel="label"
+                  optionValue="label"
+                  autoResize="true"
+                  [editable]="true"
+                  placeholder="Выберите действие"
+                  class="w-full">
+      </p-dropdown>
+    </div>
+
+  </div>
+
+  <div class="flex flex-column align-items-start gap-2 w-full mb-2">
+    <span class="align-self-start">После устранения нарушений прошу Вас представить официальный ответ&nbsp;</span>
+    <textarea pTextarea
+              autoResize="true"
+              rows="1"
+              formControlName="contacts"
+              class="w-full"
+              style="max-width:40rem;"></textarea>
+  </div>
+
+  <div class="flex align-items-start w-full gap-2 mb-2">
+    <span class="align-self-start">Фото нарушения:</span>
+
+    <p-fileUpload
+      #uploader
+      name="photos"
+      customUpload="true"
+      (onSelect)="onSelect($event)"
+      (onRemove)="onRemove($event)"
+      (onClear)="onClear()"
+      [showUploadButton]="false"
+      [showCancelButton]="false"
+      accept="image/*"
+      multiple
+      chooseLabel="Добавить фото нарушения"
+      chooseStyleClass="p-button-secondary p-button-lg">
+    </p-fileUpload>
+
+    <div class="flex flex-row flex-wrap gap-2 mt-2">
+      <div *ngFor="let p of existingPhotos" class="relative">
+        <img [src]="photoSrc(p)"
+             class="w-6rem h-4rem object-cover border-round shadow-2" />
+        <button type="button"
+                pButton
+                icon="pi pi-times"
+                severity="danger"
+                size="small"
+                class="remove-btn"
+                (click)="removeExistingPhoto(p)"></button>
+      </div>
+    </div>
+  </div>
+
+
+</div>
+
+<!-- --- КНОПКИ --- -->
+<footer class="actions no-print flex flex-wrap gap-3 mt-4">
+  <!-- 1. Сохранить в БД -->
+  <p-button
+    severity="secondary"
+    size="large"
+    label="Сохранить в БД"
+    icon="pi pi-database"
+    [raised]="true"
+    class=""
+    (click)="saveToDb()"
+    [disabled]="form.invalid">
+  </p-button>
+
+  <!-- 2. Скачать DOCX -->
+  <p-button
+    [raised]="true"
+    size="large"
+    label="Скачать DOCX"
+    icon="pi pi-file-word"
+    severity="secondary"
+    class=""
+    (click)="saveAsDocx()"
+    [disabled]="form.invalid">
+  </p-button>
+
+  <!-- 3. Очистить форму -->
+  <p-button
+    [raised]="true"
+    severity="secondary"
+    size="large"
+    label="Очистить форму"
+    icon="pi pi-times"
+    (click)="clearForm()">
+  </p-button>
+</footer>
+
+<p-toast position="top-right"></p-toast>

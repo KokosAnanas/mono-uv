@@ -1,0 +1,30 @@
+
+<header
+  class="surface-200 border-bottom-1 border-300 sticky top-0 z-5
+         flex align-items-center justify-content-between px-4 py-2">
+
+  <!-- слева -->
+  <span routerLink="/" class=" font-bold  select-none cursor-pointer">
+    УВЕДОМЛЕНИЕ.РУ
+  </span>
+
+  <!-- справа -->
+  <div class="flex align-items-center gap-3">
+    <!-- пункты меню -->
+    <p-menubar
+      [model]="items"
+      styleClass="w-auto shadow-2 border-round">
+    </p-menubar>
+
+    <!-- кнопка выхода -->
+    <button pButton type="button"
+            icon="pi pi-power-off"
+            class="p-button-text p-button-sm"
+            (click)="logout()">
+      Выход
+    </button>
+  </div>
+</header>
+
+
+

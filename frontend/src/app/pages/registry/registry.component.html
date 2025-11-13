@@ -1,0 +1,162 @@
+<p-table
+  #dt
+  [value]="notices"
+  showGridlines
+  [first]="first"
+  [rows]="rows"
+  dataKey="noticeNum"
+  rowGroupMode="rowspan"
+  groupRowsBy="noticeNum"
+  sortField="noticeNum"
+  sortMode="single"
+  [columns]="selectedColumns"
+  stateKey="notice-registry"
+  stateStorage="session"
+  (onPage)="first = $event.first"
+>
+  <!-- caption: колонки / экспорт / поиск -->
+  <ng-template pTemplate="caption">
+    <p-multiselect
+      [options]="cols"
+      [(ngModel)]="selectedColumns"
+      optionLabel="header"
+      display="chip"
+      selectedItemsLabel="{0} выбрано"
+      class="w-10rem"
+    ></p-multiselect>
+
+    <span class="mx-3">
+    <input
+      #globalFilterInput
+      pInputText
+      type="text"
+      placeholder="Поиск…"
+      [(ngModel)]="globalFilterValue"
+      (input)="onGlobalFilter($event)"
+      class="w-20rem"
+    />
+    <p-button
+      variant="text" severity="secondary"
+      icon="pi pi-times"
+
+      class="ml-0"
+      label=""
+      (click)="resetGlobalFilter(globalFilterInput)"
+    />
+  </span>
+
+    <p-button
+      icon="pi pi-download"
+      label="Скачать в формате CSV"
+      class="mx-2"
+      severity="secondary"
+
+      (click)="dt.exportCSV()"
+    />
+  </ng-template>
+
+  <!-- обычный заголовок -->
+  <ng-template pTemplate="header" let-columns>
+    <tr>
+      <th style="width:3rem">№</th>
+      <th *ngFor="let col of columns" pResizableColumn class="text-center">
+        <div class="font-semibold mb-1">{{ col.header }}</div>
+        <p-columnFilter [field]="col.field" display="menu" pStyleClass="w-full"/>
+      </th>
+    </tr>
+  </ng-template>
+
+  <!-- тело -->
+  <ng-template
+    pTemplate="body"
+    let-row
+    let-rowIndex="rowIndex"
+    let-rowgroup="rowgroup"
+    let-rowspan="rowspan"
+    let-columns="columns"
+  >
+    <tr>
+      <!-- ячейка со сквозным номером (учитываем пагинацию) -->
+      <td>{{ first + rowIndex + 1 }}</td>
+      <ng-container *ngFor="let col of columns">
+        <!-- показываем ячейку либо если это не «склеиваемое» поле,
+             либо если это первая строка группы -->
+        <td
+          *ngIf="displayCell(col.field, rowgroup)"
+          [attr.rowspan]="getRowspan(col.field, rowgroup, rowspan)"
+        >
+          <ng-container [ngSwitch]="col.field">
+
+            <span *ngSwitchCase="'noticeDate'">
+            {{ row.noticeDate | date: 'dd.MM.yyyy' }}
+            </span>
+
+            <span *ngSwitchCase="'deadline'">
+            {{ row.deadline | date: 'dd.MM.yyyy' }}
+            </span>
+
+            <!-- колонка «Фото нарушения» -->
+            <ng-container *ngSwitchCase="'photos'">
+              <!-- Если есть фото -->
+              <ng-container *ngIf="row.photos?.length; else noPhoto">
+                <div class="flex flex-row flex-wrap gap-2">
+                  <p-image
+                    *ngFor="let p of row.photos"
+                    [src]="photoSrc(p)"
+                    preview
+                    imageClass="w-6rem h-4rem object-cover border-round shadow-2">
+                  </p-image>
+                </div>
+              </ng-container>
+
+              <!-- Если фотографий нет -->
+              <ng-template #noPhoto>
+                <span class="text-500 italic">Нет фото</span>
+              </ng-template>
+            </ng-container>
+
+            <ng-container *ngSwitchCase="'noticeNum'">
+              {{ row.noticeNum }}
+              <div class="m-2 flex flex-row gap-2">
+                <p-button
+                  severity="secondary"
+                  [raised]="true"
+                  icon="pi pi-external-link"
+                  class=""
+                  (click)="openNotice(row)"
+                  size="large"
+                  pTooltip="Открыть уведомление"
+                ></p-button>
+                <p-button
+                  severity="danger"
+                  [raised]="true"
+                  icon="pi pi-trash"
+                  class=""
+                  (click)="deleteNotice(row)"
+                  size="small"
+                  pTooltip="Удалить уведомление"
+                ></p-button>
+              </div>
+
+            </ng-container>
+
+            <span *ngSwitchDefault>
+            {{ row[col.field] }}
+            </span>
+          </ng-container>
+        </td>
+      </ng-container>
+    </tr>
+  </ng-template>
+
+  <!-- когда данных нет -->
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td [attr.colspan]="selectedColumns.length + 1" class="text-center">
+        Нет данных
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<p-confirmDialog></p-confirmDialog>

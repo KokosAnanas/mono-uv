@@ -95,3 +95,33 @@ data/db/
 .vscode/
 .DS_Store
 Thumbs.db
+
+# === hygiene ===
+# Node/Angular
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+frontend/.angular/cache/
+
+# Local envs (секреты)
+.env
+backend/.env
+frontend/.env
+
+# Runtime uploads (хранятся на сервере в volume, в репо не нужны)
+uploads/
+backend/uploads/
+
+# Локальные данные/логи
+**/*.log
+data/
+mongo_data/
+
+# dotenv
+.env
+backend/.env
+frontend/.env
+
+# runtime artifacts
+backend/uploads/

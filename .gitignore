@@ -35,3 +35,63 @@ data/db/
 .vscode/
 .DS_Store
 Thumbs.db
+
+# === hygiene ===
+# Node/Angular
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+frontend/.angular/cache/
+
+# Local envs (секреты)
+.env
+backend/.env
+frontend/.env
+
+# Runtime uploads (хранятся на сервере в volume, в репо не нужны)
+uploads/
+backend/uploads/
+
+# Локальные данные/логи
+**/*.log
+data/
+mongo_data/
+
+# Node/Angular/Nest
+node_modules/
+dist/
+coverage/
+.tmp/
+
+# Angular кэш/артефакты (если есть)
+.angular/
+.output/
+
+# Секреты/переменные окружения
+*.env
+.env
+.env.*
+backend/.env
+web/.env
+frontend/.env
+
+# Загрузки и кэш (оставим пустую папку через .gitkeep)
+**/uploads/*
+!**/uploads/.gitkeep
+
+# Логи
+*.log
+
+# Docker/NGINX рабочие файлы (если появятся)
+nginx/cache/
+
+# MongoDB данные (храним дампами, не бинарники)
+mongo_data/
+data/db/
+
+# IDE/OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

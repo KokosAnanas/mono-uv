@@ -2,74 +2,127 @@ import {
     Body,
     Controller,
     Delete,
+    ForbiddenException,
     Get,
     HttpException,
     HttpStatus,
     Param,
     Post,
     Put,
-    UseGuards
+    Request,
+    UseGuards,
 } from '@nestjs/common';
-import {UsersService} from "../../services/users/users.service";
-import {User} from "../../shemas/user";
-import {UserDto} from "../../dto/user-dto";
-import {AuthGuard} from "@nestjs/passport";
-import {UserAuthPipe} from "../../pipes/user.pipe";
-import {JwtAuthGuard} from "../../services/authentication/jwt-auth.guard/jwt-auth.guard.service";
+import { UsersService } from '../../services/users/users.service';
+import { User } from '../../shemas/user';
+import { UserDto } from '../../dto/user-dto';
+import { UserAuthPipe } from '../../pipes/user.pipe';
+import { JwtAuthGuard } from '../../services/authentication/jwt-auth.guard/jwt-auth.guard.service';
 import { Public } from '../../auth/public.decorator';
 
-@Public()
-@Public()
+/**
+ * Контроллер пользователей
+ * По умолчанию все эндпоинты защищены JWT (через глобальный guard)
+ * Публичные эндпоинты помечены декоратором @Public()
+ * @see https://docs.nestjs.com/security/authentication#enable-authentication-globally
+ */
 @Controller('users')
 export class UsersController {
     constructor(private userService: UsersService) {}
 
+    /**
+     * Получение списка пользователей (только для админов)
+     * ЗАЩИЩЕНО: требуется JWT токен + роль admin
+     */
+    @UseGuards(JwtAuthGuard)
     @Get()
-    getAllUsers(): Promise<User[]> {
+    async getAllUsers(@Request() req): Promise<User[]> {
+        // Проверяем роль пользователя из JWT payload
+        if (req.user?.role !== 'admin') {
+            throw new ForbiddenException('Доступ запрещён. Требуется роль администратора.');
+        }
         return this.userService.getAllUsers();
     }
 
-    @Get(":id")
-    getUserById(@Param('id') id): Promise<User | null> {
+    /**
+     * Получение пользователя по ID
+     * ЗАЩИЩЕНО: требуется JWT токен
+     */
+    @UseGuards(JwtAuthGuard)
+    @Get(':id')
+    getUserById(@Param('id') id: string): Promise<User | null> {
         return this.userService.getUserById(id);
     }
 
-            // ус
+    /**
+     * Регистрация нового пользователя
+     * ПУБЛИЧНЫЙ эндпоинт - доступен без авторизации
+     * @see https://docs.nestjs.com/security/authentication#login-route
+     */
+    @Public()
     @Post()
-    sendUser(@Body(UserAuthPipe) data: UserDto): Promise<boolean> {
+    async sendUser(@Body(UserAuthPipe) data: UserDto): Promise<boolean> {
+        const existingUsers = await this.userService.checkRegUser(data.login);
 
-        return this.userService.checkRegUser(data.login).then((queryRes) => {
-            console.log('data reg', queryRes)
-            if (queryRes.length === 0) {
-                return this.userService.sendUser(data);
-            } else {
-                console.log('err - user is exists')
-                throw new HttpException({
+        if (existingUsers.length > 0) {
+            throw new HttpException(
+                {
                     status: HttpStatus.CONFLICT,
                     errorText: 'Пользователь уже существует',
-                }, HttpStatus.CONFLICT);
-            }
-        });
+                },
+                HttpStatus.CONFLICT,
+            );
+        }
 
+        return this.userService.sendUser(data);
     }
 
-    @Post(":login")
-    authUser(@Body(UserAuthPipe) data: UserDto, @Param('login') login)  {
+    /**
+     * Аутентификация пользователя (логин)
+     * ПУБЛИЧНЫЙ эндпоинт - доступен без авторизации
+     * @see https://docs.nestjs.com/security/authentication#login-route
+     */
+    @Public()
+    @Post(':login')
+    authUser(@Body(UserAuthPipe) data: UserDto) {
         return this.userService.login(data);
     }
 
-    @Put(":id")
-    updateUsers(@Param('id') id, @Body() data) : Promise<User | null> {
+    /**
+     * Обновление данных пользователя
+     * ЗАЩИЩЕНО: требуется JWT токен
+     */
+    @UseGuards(JwtAuthGuard)
+    @Put(':id')
+    updateUsers(@Param('id') id: string, @Body() data: UserDto): Promise<User | null> {
         return this.userService.updateUsers(id, data);
     }
 
+    /**
+     * Удаление ВСЕХ пользователей (только для админов)
+     * ЗАЩИЩЕНО: требуется JWT токен + роль admin
+     * ВНИМАНИЕ: Опасная операция!
+     */
+    @UseGuards(JwtAuthGuard)
     @Delete()
-    deleteUsers() {
+    async deleteUsers(@Request() req) {
+        // Только администратор может удалять всех пользователей
+        if (req.user?.role !== 'admin') {
+            throw new ForbiddenException('Доступ запрещён. Требуется роль администратора.');
+        }
         return this.userService.deleteUsers();
     }
 
-    @Delete(":id")
-    deleteUserById(@Param('id') id): Promise<User | null> {
+    /**
+     * Удаление пользователя по ID (только для админов)
+     * ЗАЩИЩЕНО: требуется JWT токен + роль admin
+     */
+    @UseGuards(JwtAuthGuard)
+    @Delete(':id')
+    async deleteUserById(@Param('id') id: string, @Request() req): Promise<User | null> {
+        // Только администратор может удалять пользователей
+        if (req.user?.role !== 'admin') {
+            throw new ForbiddenException('Доступ запрещён. Требуется роль администратора.');
+        }
         return this.userService.deleteUserById(id);
     }
 }

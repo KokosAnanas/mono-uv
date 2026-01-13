@@ -70,10 +70,22 @@ export class UsersService {
         return this.userModel.find({login: login});
     }
 
+    /**
+     * Аутентификация пользователя и выдача JWT токена
+     * @see https://docs.nestjs.com/security/authentication#jwt-functionality
+     */
     async login(user: IUser) {
         const userFromDB = <IUser>await this.userModel.findOne({login: user.login});
-        const payload = {login: user.login, password: user.password, role: userFromDB?.role, _id: userFromDB?._id};
-        const userFromDb = await this.userModel.find({login: user.login});
+
+        // ВАЖНО: В payload НЕ включаем пароль!
+        // sub (subject) - стандартное поле JWT для идентификатора пользователя
+        // @see https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.2
+        const payload = {
+            sub: userFromDB?._id,      // идентификатор пользователя
+            login: user.login,          // логин для быстрого доступа
+            role: userFromDB?.role,     // роль для авторизации
+        };
+
         return {
             id: userFromDB._id,
             access_token: this.jwtService.sign(payload),

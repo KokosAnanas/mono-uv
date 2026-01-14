@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { IUser, IUserRegister } from '../interfaces/users';
+import { IUser, IUserRegister } from '@uvedomlenie/shared';
 import { HttpClient } from '@angular/common/http';
 import { API } from '../shared/api';
 import {map, tap} from 'rxjs';

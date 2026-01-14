@@ -1,4 +1,4 @@
-import { IUser } from '../interfaces/user.interface';
+import { IUser } from '@uvedomlenie/shared';
 import { IsNotEmpty, IsString, MinLength, MaxLength } from 'class-validator';
 
 /**

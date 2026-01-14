@@ -3,7 +3,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { IUser } from '../../../interfaces/users';
+import { IUser } from '@uvedomlenie/shared';
 import { UserService } from '../../../services/user.service';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';

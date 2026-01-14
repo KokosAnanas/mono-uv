@@ -1,10 +1,12 @@
-export interface IUser {
-  login: string
-  password?: string
-}
-
-export interface IUserRegister {
-  login: string;
-  password?: string;
-  email: string;
-}
+/**
+ * Реэкспорт интерфейсов пользователя из shared библиотеки
+ * @see https://nx.dev/concepts/more-concepts/library-types
+ */
+export type {
+  IUser,
+  IUserPublic,
+  IUserRegister,
+  IUserLogin,
+  IAuthResponse,
+  Roles,
+} from '@uvedomlenie/shared';

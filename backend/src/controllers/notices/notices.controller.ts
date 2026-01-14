@@ -13,7 +13,7 @@ import {
 import {NoticesService} from "../../services/notices/notices.service";
 import {JwtAuthGuard} from "../../services/authentication/jwt-auth.guard/jwt-auth.guard.service";
 import {ValidationParamIdPipe} from "../../pipes/param.pipe";
-import {INotice} from "../../interfaces/notice.interface";
+import { INotice } from '@uvedomlenie/shared';
 import {FilesInterceptor} from "@nestjs/platform-express";
 import {diskStorage} from "multer";
 import {NoticeDto} from "../../dto/notice-dto";

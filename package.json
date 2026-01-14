@@ -1,0 +1,27 @@
+{
+  "name": "@uvedomlenie/source",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Uvedomlenie - монорепозиторий для системы учёта уведомлений",
+  "scripts": {
+    "build": "nx run-many -t build",
+    "test": "nx run-many -t test",
+    "lint": "nx run-many -t lint",
+    "start:backend": "nx serve backend",
+    "start:frontend": "nx serve frontend",
+    "build:backend": "nx build backend",
+    "build:frontend": "nx build frontend"
+  },
+  "workspaces": [
+    "backend",
+    "frontend",
+    "libs/*"
+  ],
+  "devDependencies": {
+    "@nx/js": "^22.3.3",
+    "nx": "^22.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -1,127 +1,75 @@
-# Node/Angular/Nest
+# ============================
+# Node.js / npm
+# ============================
 node_modules/
+**/node_modules/
+package-lock.json
+
+# ============================
+# Build outputs
+# ============================
 dist/
+**/dist/
 coverage/
 .tmp/
 
-# Angular кэш/артефакты (если есть)
+# ============================
+# Angular
+# ============================
 .angular/
-.output/
+frontend/.angular/
 
-# Секреты/переменные окружения
-*.env
+# ============================
+# Nx
+# ============================
+.nx/
+project-graph.html
+static/
+
+# ============================
+# Environment / Secrets
+# ============================
 .env
 .env.*
+!.env.example
 backend/.env
-web/.env
 frontend/.env
 
-# Загрузки и кэш (оставим пустую папку через .gitkeep)
-**/uploads/*
-!**/uploads/.gitkeep
+# ============================
+# Uploads (runtime data)
+# ============================
+uploads/
+backend/uploads/
+!backend/uploads/.gitkeep
 
-# Логи
+# ============================
+# Logs
+# ============================
 *.log
+**/*.log
 
-# Docker/NGINX рабочие файлы (если появятся)
+# ============================
+# Database
+# ============================
+mongo_data/
+data/
+
+# ============================
+# Docker / Nginx
+# ============================
 nginx/cache/
 
-# MongoDB данные (храним дампами, не бинарники)
-mongo_data/
-data/db/
-
-# IDE/OS
+# ============================
+# IDE / OS
+# ============================
 .idea/
 .vscode/
 .DS_Store
 Thumbs.db
 
-# === hygiene ===
-# Node/Angular
-node_modules/
-**/node_modules/
-dist/
-**/dist/
-frontend/.angular/cache/
-
-# Local envs (секреты)
-.env
-backend/.env
-frontend/.env
-
-# Runtime uploads (хранятся на сервере в volume, в репо не нужны)
-uploads/
-backend/uploads/
-
-# Локальные данные/логи
-**/*.log
-data/
-mongo_data/
-
-# Node/Angular/Nest
-node_modules/
-dist/
-coverage/
-.tmp/
-
-# Angular кэш/артефакты (если есть)
-.angular/
-.output/
-
-# Секреты/переменные окружения
-*.env
-.env
-.env.*
-backend/.env
-web/.env
-frontend/.env
-
-# Загрузки и кэш (оставим пустую папку через .gitkeep)
-**/uploads/*
-!**/uploads/.gitkeep
-
-# Логи
-*.log
-
-# Docker/NGINX рабочие файлы (если появятся)
-nginx/cache/
-
-# MongoDB данные (храним дампами, не бинарники)
-mongo_data/
-data/db/
-
-# IDE/OS
-.idea/
-.vscode/
-.DS_Store
-Thumbs.db
-
-# === hygiene ===
-# Node/Angular
-node_modules/
-**/node_modules/
-dist/
-**/dist/
-frontend/.angular/cache/
-
-# Local envs (секреты)
-.env
-backend/.env
-frontend/.env
-
-# Runtime uploads (хранятся на сервере в volume, в репо не нужны)
-uploads/
-backend/uploads/
-
-# Локальные данные/логи
-**/*.log
-data/
-mongo_data/
-
-# dotenv
-.env
-backend/.env
-frontend/.env
-
-# runtime artifacts
-backend/uploads/
+# ============================
+# Temporary files
+# ============================
+tmpclaude-*
+nul
+*.tmp

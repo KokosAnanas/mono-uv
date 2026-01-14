@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Notice, NoticeDocument } from '../../shemas/notice';
 import { Model } from 'mongoose';
 import { NoticeDto } from '../../dto/notice-dto';
-import { INotice } from '../../interfaces/notice.interface';
+import { INotice } from '@uvedomlenie/shared';
 import { promises as fs } from 'fs';
 import { join } from 'path';
 

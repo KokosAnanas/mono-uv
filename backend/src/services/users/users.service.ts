@@ -4,7 +4,7 @@ import {User, UserDocument} from "../../shemas/user";
 import {Model} from "mongoose";
 import {JwtService} from "@nestjs/jwt";
 import * as bcrypt from 'bcrypt';
-import {IResponseUser, IUser} from "../../interfaces/user.interface";
+import { IResponseUser, IUser } from '@uvedomlenie/shared';
 import {Request} from "express";
 
 @Injectable()

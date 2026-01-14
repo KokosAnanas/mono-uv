@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
-import {INotice, INoticeViolation} from "../interfaces/notice.interface";
+import { INotice, INoticeViolation } from '@uvedomlenie/shared';
 
 export type NoticeDocument = HydratedDocument<Notice>;
 

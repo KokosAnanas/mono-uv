@@ -5,7 +5,7 @@ import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
 import { InputTextModule } from 'primeng/inputtext';
 import { UserService } from '../../../services/user.service';
-import { IUserRegister } from '../../../interfaces/users';
+import { IUserRegister } from '@uvedomlenie/shared';
 import { MessageService } from 'primeng/api';
 
 @Component({

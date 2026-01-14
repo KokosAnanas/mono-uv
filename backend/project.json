@@ -1,0 +1,45 @@
+{
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "name": "backend",
+  "projectType": "application",
+  "sourceRoot": "backend/src",
+  "tags": ["scope:backend", "type:app"],
+  "targets": {
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npm run start:dev",
+        "cwd": "backend"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npm run build",
+        "cwd": "backend"
+      },
+      "outputs": ["{projectRoot}/dist"]
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npm run test",
+        "cwd": "backend"
+      }
+    },
+    "test-e2e": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npm run test:e2e",
+        "cwd": "backend"
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npm run lint",
+        "cwd": "backend"
+      }
+    }
+  }
+}

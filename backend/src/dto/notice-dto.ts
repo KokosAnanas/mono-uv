@@ -1,4 +1,4 @@
-import { INotice, INoticeViolation } from '../interfaces/notice.interface';
+import { INotice, INoticeViolation } from '@uvedomlenie/shared';
 import {
     IsString,
     IsNotEmpty,

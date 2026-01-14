@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {firstValueFrom, Observable} from 'rxjs';
-import {INotice} from '../interfaces/notice';
+import { INotice } from '@uvedomlenie/shared';
 import {API} from '../shared/api';
 
 @Injectable({ providedIn: 'root' })
